@@ -1,152 +1,443 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Телевидение для бабушки</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    #home {
-      width: 100%;
-      max-width: 480px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 15px;
-      color: #0d6efd;
-    }
-    .channel-btn {
-      font-size: 1.6rem;
-      padding: 15px 30px;
-      margin: 10px 0;
-      border: 2px solid #0d6efd;
-      border-radius: 12px;
-      background-color: #ffffff;
-      color: #0d6efd;
-      cursor: pointer;
-      width: 100%;
-      box-sizing: border-box;
-      transition: background-color 0.3s, color 0.3s;
-      box-shadow: 0 2px 5px rgba(13,110,253,0.2);
-    }
-    .channel-btn:hover {
-      background-color: #0d6efd;
-      color: white;
-      box-shadow: 0 4px 10px rgba(13,110,253,0.4);
-    }
-    #channel-view {
-      display: none;
-      width: 100%;
-      height: 80vh;
-      position: relative;
-      margin-top: 15px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      background-color: #000;
-    }
-    #channel-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: black;
-      border-radius: 12px;
-    }
-    #back-btn {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      z-index: 10;
-      font-size: 1.3rem;
-      padding: 8px 16px;
-      background: #dc3545;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      cursor: pointer;
-      opacity: 0.9;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      transition: opacity 0.3s;
-    }
-    #back-btn:hover {
-      opacity: 1;
-    }
-    #instructions {
-      margin-top: 25px;
-      font-size: 1rem;
-      line-height: 1.6;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      color: #333;
-    }
-    #instructions h2 {
-      color: #0d6efd;
-      margin-top: 0;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>📺 Каналы для бабушки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d6efd; /* Vibrant Blue */
+            --accent-color: #28a745; /* Green for hover */
+            --background-start: #e0f7fa; /* Light Cyan */
+            --background-end: #cfd9e8; /* Light Blue-Gray */
+            --card-background: #ffffff;
+            --text-color: #212529; /* Dark Grey */
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.3);
+            --border-radius: 20px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        #home {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+
+        #dynamic-title {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-family: 'Comfortaa', cursive;
+            font-size: 3.2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px var(--shadow-light);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .main-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        .column {
+            background-color: var(--card-background);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 6px 15px var(--shadow-light);
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px var(--shadow-light);
+        }
+
+        .channel-grid {
+            display: grid;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        /* Base button styles */
+        .channel-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 15px;
+            background-color: var(--card-background);
+            color: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            font-weight: 700;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            padding: 15px 10px;
+            font-size: 1.1rem;
+        }
+
+        .channel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px var(--shadow-strong);
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Specific styles for TV Channel buttons (larger) */
+        .tv-channel-btn {
+            font-size: 1.5rem;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        .tv-channel-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px var(--shadow-strong);
+        }
+
+        /* Smaller text for news/radio buttons */
+        .news-channel-btn, .radio-channel-btn {
+            font-size: 1rem;
+            padding: 12px 10px;
+        }
+
+        .channel-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.7s ease-out;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .channel-btn:hover::before {
+            width: 0;
+            height: 0;
+        }
+
+        .instructions {
+            margin-top: 30px;
+            background: var(--card-background);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 6px 15px var(--shadow-light);
+            text-align: left;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .instructions h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 2rem;
+            text-shadow: 1px 1px 2px var(--shadow-light);
+        }
+
+        .instructions ul {
+            padding-left: 25px;
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        #channel-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 999;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        #channel-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: black;
+        }
+
+        #back-btn {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            z-index: 10;
+            font-size: 1.5rem;
+            padding: 12px 25px;
+            background: #dc3545;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        #back-btn:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 992px) {
+            .main-content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .column {
+                padding: 20px;
+            }
+            .column h2 {
+                font-size: 1.8rem;
+            }
+            .tv-channel-btn {
+                font-size: 1.3rem;
+                padding: 18px;
+            }
+            .news-channel-btn, .radio-channel-btn {
+                font-size: 0.95rem;
+                padding: 10px;
+            }
+            #dynamic-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+            .column h2 {
+                font-size: 1.5rem;
+            }
+            .channel-btn {
+                font-size: 1rem;
+                padding: 15px;
+            }
+            .instructions h2 {
+                font-size: 1.5rem;
+            }
+            #back-btn {
+                top: 15px;
+                left: 15px;
+                font-size: 1.2rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div id="home">
-    <h1>📺 Каналы для бабушки</h1>
+    <div id="home">
+        <h1 id="dynamic-title"></h1>
 
-    <button class="channel-btn" onclick="openChannel('https://smotret.tv/tnt')">📺 ТНТ</button>
-    <button class="channel-btn" onclick="openChannel('https://smotret.tv/planeta-rtr')">📺 РТР Планета</button>
-    <button class="channel-btn" onclick="openChannel('https://smotret.tv/ntv')">📺 НТВ</button>
-    <button class="channel-btn" onclick="openChannel('https://smotret.tv/yu')">📺 Ю ТВ</button>
-    <button class="channel-btn" onclick="openChannel('https://smotret.tv/rossiya_24')">📺 Россия 24</button>
+        <div class="main-content-grid">
+            <div class="column news-column">
+                <h2>📰 Новости</h2>
+                <div id="news-channel-grid" class="channel-grid"></div>
+            </div>
 
-<div id="instructions">
-  <h2>Как пользоваться</h2>
-  <p><strong>Полноэкранный режим:</strong></p>
-  <ul>
-    <li>Нажмите на кнопку <span style="font-weight:bold;">⛶</span> внизу видео, чтобы развернуть на весь экран.</li>
-    <li>Чтобы выйти из полноэкранного режима, нажмите ту же кнопку.</li>
-  </ul>
-  <p><strong>Звук:</strong></p>
-  <ul>
-    <li>Если звук выключен, на видео будет значок <span style="font-weight:bold;">🔇</span>.</li>
-    <li>Нажмите на значок, чтобы включить звук.</li>
-    <li>Громкость можно изменить ползунком рядом с этим значком.</li>
-  </ul>
-  <p><strong>Если звук не слышно, проверьте громкость на планшете.</strong></p>
-</div>
+            <div class="column tv-column">
+                <h2>📺 ТВ Каналы</h2>
+                <div id="tv-channel-grid" class="channel-grid"></div>
+            </div>
 
-  </div>
+            <div class="column radio-column">
+                <h2>📻 Радио</h2>
+                <div id="radio-channel-grid" class="channel-grid"></div>
+            </div>
+        </div>
 
-  <div id="channel-view">
-    <button id="back-btn" onclick="goHome()">🔙 Назад</button>
-    <iframe id="channel-frame" allowfullscreen></iframe>
-  </div>
+        <div class="instructions">
+            <h2>Как пользоваться</h2>
+            <p><strong>Полноэкранный режим:</strong></p>
+            <ul>
+                <li>Нажмите на кнопку <span style="font-weight:bold;">⛶</span> внизу видео, чтобы развернуть на весь экран.</li>
+                <li>Чтобы выйти из полноэкранного режима, нажмите ту же кнопку.</li>
+            </ul>
+            <p><strong>Звук:</strong></p>
+            <ul>
+                <li>Если звук выключен, на видео будет значок <span style="font-weight:bold;">🔇</span>.</li>
+                <li>Нажмите на значок, чтобы включить звук.</li>
+                <li>Громкость можно изменить ползунком рядом с этим значком.</li>
+            </ul>
+            <p><strong>Если звук не слышно, проверьте громкость на планшете.</strong></p>
+            <p style="font-size:0.9em; color:#6c757d;">
+                *Примечание: Некоторые новостные и радиосайты могут не загружаться в полноэкранном режиме из-за их собственных настроек безопасности. В таких случаях вы увидите пустой экран.
+            </p>
+        </div>
+    </div>
 
-  <script>
-    function openChannel(url) {
-      document.getElementById('home').style.display = 'none';
-      document.getElementById('channel-view').style.display = 'block';
-      document.getElementById('channel-frame').src = url;
-    }
-    function goHome() {
-      document.getElementById('channel-frame').src = '';
-      document.getElementById('channel-view').style.display = 'none';
-      document.getElementById('home').style.display = 'block';
-      window.scrollTo(0,0);
-    }
-  </script>
+    <div id="channel-view">
+        <button id="back-btn" onclick="goHome()">🔙 Назад</button>
+        <iframe id="channel-frame" allowfullscreen></iframe>
+    </div>
 
+    <script>
+        const welcomeTitles = [
+            "Привет, бабушка! 👋", "Добро пожаловать! 🏡", "Как дела сегодня? 😊",
+            "Смотри любимые каналы! 📺", "Хорошего дня! ☀️", "Здравствуйте! 🌸",
+            "Приятного просмотра! ✨", "Отличный выбор! 👍", "Приветствуем! 🎉",
+            "Labas, močiute! (LT) 😊", "Sveiki atvykę! (LT) 🏡", "Geros dienos! (LT) ☀️",
+            "Cześć, babciu! (PL) 👋", "Witamy! (PL) ✨", "Miłego oglądania! (PL) 📺",
+            "Уютного вечера! 🌙", "Всегда рады! ❤️", "Ваш портал развлечений! 🌟",
+            "Рады видеть! 😄", "Отдыхайте с удовольствием! 🛋️"
+        ];
+        let titleIndex = 0;
+
+        function updateTitle() {
+            const titleElement = document.getElementById('dynamic-title');
+            titleElement.style.opacity = '0';
+            setTimeout(() => {
+                titleElement.textContent = welcomeTitles[titleIndex];
+                titleElement.style.opacity = '1';
+                titleIndex = (titleIndex + 1) % welcomeTitles.length;
+            }, 800);
+        }
+
+        const channels = {
+            'news': [
+                { name: "Delfi (LT)", url: "https://www.delfi.lt/" },
+                { name: "РИА Новости (RU)", url: "https://ria.ru/" },
+                { name: "Onet (PL)", url: "https://www.onet.pl/" },
+                { name: "Interia (PL)", url: "https://www.interia.pl/" }
+            ],
+            'tv': [
+                { name: "ТНТ", url: "https://smotret.tv/tnt" },
+                { name: "РТР Планета", url: "https://smotret.tv/planeta-rtr" },
+                { name: "НТВ", url: "https://smotret.tv/ntv" },
+                { name: "Ю ТВ", url: "https://smotret.tv/yu" },
+                { name: "Россия 24", url: "https://smotret.tv/rossiya_24" },
+                { name: "Беларусь 24", url: "https://vits.tv/en/tv-online/belarus-24/" },
+                { name: "Polonia TV", url: "https://listatv.pl/online.php?article_id=47" },
+                { name: "Delfi TV (LT)", url: "https://www.delfi.lt/video/tv" }
+            ],
+            'radio': [
+                { name: "Русское Радио (RU)", url: "https://rusradio.ru/online" },
+            ]
+        };
+
+        function getClickCounts() {
+            try {
+                return JSON.parse(localStorage.getItem('channelClicks')) || {};
+            } catch (e) {
+                console.error("Failed to parse channelClicks from localStorage", e);
+                return {};
+            }
+        }
+
+        function saveClickCounts(counts) {
+            try {
+                localStorage.setItem('channelClicks', JSON.stringify(counts));
+            } catch (e) {
+                console.error("Failed to save channelClicks to localStorage", e);
+            }
+        }
+
+        function createButton(channel, category) {
+            const button = document.createElement('button');
+            const buttonClass = (category === 'tv') ? 'channel-btn tv-channel-btn' : 'channel-btn';
+            button.className = buttonClass;
+            button.textContent = channel.name;
+            button.onclick = () => openChannel(channel.url, channel.name);
+            return button;
+        }
+
+        function renderChannels() {
+            const clickCounts = getClickCounts();
+            
+            for (const category in channels) {
+                const categoryChannels = channels[category];
+                
+                // Get click count for each channel, defaulting to 0
+                const channelsWithClicks = categoryChannels.map(channel => ({
+                    ...channel,
+                    clicks: clickCounts[channel.name] || 0
+                }));
+                
+                // Sort channels by click count in descending order
+                channelsWithClicks.sort((a, b) => b.clicks - a.clicks);
+                
+                // Get the grid element for the current category
+                const gridId = `${category}-channel-grid`;
+                const gridElement = document.getElementById(gridId);
+                
+                if (gridElement) {
+                    gridElement.innerHTML = ''; // Clear existing buttons
+                    channelsWithClicks.forEach(channel => {
+                        gridElement.appendChild(createButton(channel, category));
+                    });
+                }
+            }
+        }
+
+        function openChannel(url, channelName) {
+            const clickCounts = getClickCounts();
+            clickCounts[channelName] = (clickCounts[channelName] || 0) + 1;
+            saveClickCounts(clickCounts);
+            
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('channel-view').style.display = 'block';
+            document.getElementById('channel-frame').src = url;
+            window.scrollTo(0, 0); 
+        }
+
+        function goHome() {
+            document.getElementById('channel-frame').src = '';
+            document.getElementById('channel-view').style.display = 'none';
+            document.getElementById('home').style.display = 'block';
+            renderChannels(); // Re-render channels to show updated order
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('dynamic-title').textContent = welcomeTitles[titleIndex];
+            titleIndex = (titleIndex + 1) % welcomeTitles.length;
+            setInterval(updateTitle, 5000);
+            renderChannels();
+        });
+    </script>
 </body>
 </html>

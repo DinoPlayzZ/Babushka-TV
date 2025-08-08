@@ -1,108 +1,152 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>TV for Grandma</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Телевидение для бабушки</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
-      background-color: black;
-      color: white;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
     }
-
-    .channel-button {
-      font-size: 2em;
-      margin: 20px;
-      padding: 20px 40px;
-      background-color: #444;
-      color: white;
-      border: none;
-      border-radius: 20px;
+    #home {
+      width: 100%;
+      max-width: 480px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #0d6efd;
+    }
+    .channel-btn {
+      font-size: 1.6rem;
+      padding: 15px 30px;
+      margin: 10px 0;
+      border: 2px solid #0d6efd;
+      border-radius: 12px;
+      background-color: #ffffff;
+      color: #0d6efd;
       cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+      transition: background-color 0.3s, color 0.3s;
+      box-shadow: 0 2px 5px rgba(13,110,253,0.2);
     }
-
-    .tilbake-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background-color: red;
+    .channel-btn:hover {
+      background-color: #0d6efd;
       color: white;
-      padding: 10px 20px;
-      font-size: 1.5em;
+      box-shadow: 0 4px 10px rgba(13,110,253,0.4);
+    }
+    #channel-view {
+      display: none;
+      width: 100%;
+      height: 80vh;
+      position: relative;
+      margin-top: 15px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      background-color: #000;
+    }
+    #channel-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: black;
+      border-radius: 12px;
+    }
+    #back-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 10;
+      font-size: 1.3rem;
+      padding: 8px 16px;
+      background: #dc3545;
       border: none;
       border-radius: 10px;
-      z-index: 9999;
+      color: white;
+      cursor: pointer;
+      opacity: 0.9;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      transition: opacity 0.3s;
     }
-
-    iframe {
-      width: 100%;
-      height: 100vh;
-      border: none;
+    #back-btn:hover {
+      opacity: 1;
+    }
+    #instructions {
+      margin-top: 25px;
+      font-size: 1rem;
+      line-height: 1.6;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      color: #333;
+    }
+    #instructions h2 {
+      color: #0d6efd;
+      margin-top: 0;
     }
   </style>
-
-  <script>
-    function notifyTasker(channel) {
-      fetch(`http://localhost:8765/channel?name=${channel}`)
-        .then(() => console.log("Tasker notified: " + channel))
-        .catch(err => console.error("Tasker error:", err));
-    }
-
-    function loadChannel(name, url) {
-      notifyTasker(name);
-      localStorage.setItem('lastChannel', name);
-      localStorage.setItem('lastURL', url);
-      window.location.hash = '#channel';
-      render();
-    }
-
-    function goBack() {
-      window.location.hash = '';
-      render();
-    }
-
-    function render() {
-      const main = document.getElementById('main');
-      const channelView = document.getElementById('channel');
-      const tilbakeBtn = document.getElementById('tilbake');
-
-      if (window.location.hash === '#channel') {
-        const url = localStorage.getItem('lastURL');
-        document.getElementById('iframe').src = url;
-        main.style.display = 'none';
-        channelView.style.display = 'block';
-        tilbakeBtn.style.display = 'block';
-      } else {
-        main.style.display = 'flex';
-        channelView.style.display = 'none';
-        tilbakeBtn.style.display = 'none';
-      }
-    }
-
-    window.addEventListener('hashchange', render);
-    window.addEventListener('load', render);
-  </script>
 </head>
 <body>
-  <!-- Tilbake button -->
-  <button id="tilbake" class="tilbake-button" onclick="goBack()" style="display: none;">Tilbake</button>
 
-  <!-- Main Menu -->
-  <div id="main" style="flex-direction: column;">
-    <button class="channel-button" onclick="loadChannel('rtr', 'https://rustv.live/main/planeta-rtr-channel.html')">RTR Planeta</button>
-    <button class="channel-button" onclick="loadChannel('1tv', 'https://rustv.live/main/1tv-channel.html')">1TV</button>
-    <!-- Add more channels here -->
+  <div id="home">
+    <h1>📺 Каналы для бабушки</h1>
+
+    <button class="channel-btn" onclick="openChannel('https://smotret.tv/tnt')">📺 ТНТ</button>
+    <button class="channel-btn" onclick="openChannel('https://smotret.tv/planeta-rtr')">📺 РТР Планета</button>
+    <button class="channel-btn" onclick="openChannel('https://smotret.tv/ntv')">📺 НТВ</button>
+    <button class="channel-btn" onclick="openChannel('https://smotret.tv/yu')">📺 Ю ТВ</button>
+    <button class="channel-btn" onclick="openChannel('https://smotret.tv/rossiya_24')">📺 Россия 24</button>
+
+<div id="instructions">
+  <h2>Как пользоваться</h2>
+  <p><strong>Полноэкранный режим:</strong></p>
+  <ul>
+    <li>Нажмите на кнопку <span style="font-weight:bold;">⛶</span> внизу видео, чтобы развернуть на весь экран.</li>
+    <li>Чтобы выйти из полноэкранного режима, нажмите ту же кнопку.</li>
+  </ul>
+  <p><strong>Звук:</strong></p>
+  <ul>
+    <li>Если звук выключен, на видео будет значок <span style="font-weight:bold;">🔇</span>.</li>
+    <li>Нажмите на значок, чтобы включить звук.</li>
+    <li>Громкость можно изменить ползунком рядом с этим значком.</li>
+  </ul>
+  <p><strong>Если звук не слышно, проверьте громкость на планшете.</strong></p>
+</div>
+
   </div>
 
-  <!-- Channel View -->
-  <div id="channel" style="display: none; width: 100%; height: 100%;">
-    <iframe id="iframe" src=""></iframe>
+  <div id="channel-view">
+    <button id="back-btn" onclick="goHome()">🔙 Назад</button>
+    <iframe id="channel-frame" allowfullscreen></iframe>
   </div>
+
+  <script>
+    function openChannel(url) {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('channel-view').style.display = 'block';
+      document.getElementById('channel-frame').src = url;
+    }
+    function goHome() {
+      document.getElementById('channel-frame').src = '';
+      document.getElementById('channel-view').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+      window.scrollTo(0,0);
+    }
+  </script>
+
 </body>
 </html>

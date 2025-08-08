@@ -1,52 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bestemor TV</title>
+  <title>TV for Grandma</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      margin: 0;
       font-family: sans-serif;
-      text-align: center;
-      background-color: #111;
+      background-color: black;
       color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    h1 {
-      margin-top: 20px;
-    }
-
-    .button {
-      padding: 20px 40px;
+    .channel-button {
+      font-size: 2em;
       margin: 20px;
-      font-size: 24px;
+      padding: 20px 40px;
       background-color: #444;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 20px;
       cursor: pointer;
     }
 
-    .button:hover {
-      background-color: #666;
+    .tilbake-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: red;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.5em;
+      border: none;
+      border-radius: 10px;
+      z-index: 9999;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100vh;
+      border: none;
     }
   </style>
-</head>
-<body>
-  <h1>Velg en kanal</h1>
-
-  <button class="button" onclick="openChannel('https://rustv.live/main/planeta-rtr-channel.html', 'rtrplaneta')">RTR Planeta</button>
-  <button class="button" onclick="openChannel('https://rustv.live/main/yu-tv.html', 'yutv')">YU TV</button>
 
   <script>
-    function openChannel(url, channelId) {
-      // Trigger intent for Tasker or Automate
-      window.location.href = `intent://${channelId}#Intent;scheme=tvchannel;end`;
-
-      // Delay a bit to let the intent register before navigating
-      setTimeout(() => {
-        window.location.href = url;
-      }, 1500);
+    function notifyTasker(channel) {
+      fetch(`http://localhost:8765/channel?name=${channel}`)
+        .then(() => console.log("Tasker notified: " + channel))
+        .catch(err => console.error("Tasker error:", err));
     }
+
+    function loadChannel(name, url) {
+      notifyTasker(name);
+      localStorage.setItem('lastChannel', name);
+      localStorage.setItem('lastURL', url);
+      window.location.hash = '#channel';
+      render();
+    }
+
+    function goBack() {
+      window.location.hash = '';
+      render();
+    }
+
+    function render() {
+      const main = document.getElementById('main');
+      const channelView = document.getElementById('channel');
+      const tilbakeBtn = document.getElementById('tilbake');
+
+      if (window.location.hash === '#channel') {
+        const url = localStorage.getItem('lastURL');
+        document.getElementById('iframe').src = url;
+        main.style.display = 'none';
+        channelView.style.display = 'block';
+        tilbakeBtn.style.display = 'block';
+      } else {
+        main.style.display = 'flex';
+        channelView.style.display = 'none';
+        tilbakeBtn.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('hashchange', render);
+    window.addEventListener('load', render);
   </script>
+</head>
+<body>
+  <!-- Tilbake button -->
+  <button id="tilbake" class="tilbake-button" onclick="goBack()" style="display: none;">Tilbake</button>
+
+  <!-- Main Menu -->
+  <div id="main" style="flex-direction: column;">
+    <button class="channel-button" onclick="loadChannel('rtr', 'https://rustv.live/main/planeta-rtr-channel.html')">RTR Planeta</button>
+    <button class="channel-button" onclick="loadChannel('1tv', 'https://rustv.live/main/1tv-channel.html')">1TV</button>
+    <!-- Add more channels here -->
+  </div>
+
+  <!-- Channel View -->
+  <div id="channel" style="display: none; width: 100%; height: 100%;">
+    <iframe id="iframe" src=""></iframe>
+  </div>
 </body>
 </html>
